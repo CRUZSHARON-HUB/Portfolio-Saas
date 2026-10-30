@@ -1,0 +1,19 @@
+{
+  "name": "professional-portfolio-saas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prismfolio — a professional portfolio SaaS built with React, Express and SQL, featuring a 3D UI",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "dev": "npm run dev --prefix server & npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "reset": "npm run reset --prefix server",
+    "start": "npm run start --prefix server"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

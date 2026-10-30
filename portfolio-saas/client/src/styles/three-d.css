@@ -1,0 +1,417 @@
+/* ============================================================
+   Prismfolio — 3D UI primitives
+   Pure CSS 3D transforms + canvas projection. No WebGL needed.
+   ============================================================ */
+
+/* --- perspective stage ------------------------------------- */
+
+.scene {
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+}
+
+.scene-sm {
+  perspective: 900px;
+}
+
+.stage {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* --- glass surfaces ----------------------------------------- */
+
+.glass {
+  position: relative;
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    rgba(10, 12, 24, 0.55);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.35), transparent 42%, transparent 60%, rgba(255, 255, 255, 0.12));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass-strong {
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03)),
+    rgba(8, 10, 20, 0.82);
+}
+
+/* --- holographic edge --------------------------------------- */
+
+.holo {
+  position: relative;
+  border-radius: var(--r-lg);
+  padding: 1px;
+  background: conic-gradient(
+    from var(--holo-angle, 0deg),
+    transparent 0%,
+    var(--accent) 12%,
+    var(--accent-2) 22%,
+    transparent 38%,
+    transparent 60%,
+    var(--accent-2) 72%,
+    transparent 88%
+  );
+  animation: holoSpin 9s linear infinite;
+}
+
+.holo-inner {
+  border-radius: calc(var(--r-lg) - 1px);
+  background: rgba(9, 11, 22, 0.92);
+  overflow: hidden;
+}
+
+@property --holo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes holoSpin {
+  to {
+    --holo-angle: 360deg;
+  }
+}
+
+/* --- CSS 3D cube -------------------------------------------- */
+
+.cube-wrap {
+  width: 220px;
+  height: 220px;
+  margin-inline: auto;
+  position: relative;
+}
+
+.cube {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  transform-style: preserve-3d;
+  transform: rotateX(-22deg);
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.02)),
+    rgba(12, 14, 28, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.cube-face.front {
+  transform: translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(139, 92, 246, 0.38);
+}
+.cube-face.back {
+  transform: rotateY(180deg) translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(139, 92, 246, 0.16);
+}
+.cube-face.right {
+  transform: rotateY(90deg) translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(34, 211, 238, 0.32);
+}
+.cube-face.left {
+  transform: rotateY(-90deg) translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(34, 211, 238, 0.16);
+}
+.cube-face.top {
+  transform: rotateX(90deg) translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(167, 139, 250, 0.28);
+}
+.cube-face.bottom {
+  transform: rotateX(-90deg) translateZ(110px);
+  box-shadow: inset 0 0 70px rgba(167, 139, 250, 0.16);
+}
+
+/* --- orbiting satellites ------------------------------------ */
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: orbitSpin 16s linear infinite;
+}
+
+.orbit.reverse {
+  animation-direction: reverse;
+  animation-duration: 22s;
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: 12%;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  transform: rotateX(74deg);
+}
+
+.orbit-satellite {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  margin: -23px;
+  border-radius: 14px;
+  transform-style: preserve-3d;
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 34px var(--accent-glow);
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+}
+
+.orbit-satellite.a {
+  transform: rotateY(0deg) translateZ(160px);
+}
+.orbit-satellite.b {
+  transform: rotateY(120deg) translateZ(160px);
+}
+.orbit-satellite.c {
+  transform: rotateY(240deg) translateZ(160px);
+}
+
+@keyframes orbitSpin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+/* --- depth layers (parallax stack) ------------------------- */
+
+.depth-layer {
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease);
+}
+
+.depth-layer.z-1 {
+  transform: translateZ(40px);
+}
+.depth-layer.z-2 {
+  transform: translateZ(80px);
+}
+.depth-layer.z-3 {
+  transform: translateZ(130px);
+}
+.depth-layer.z-4 {
+  transform: translateZ(190px);
+}
+
+/* --- float / levitate --------------------------------------- */
+
+.float {
+  animation: levitate 7s var(--ease-in-out) infinite;
+}
+
+.float-1 {
+  animation-duration: 6s;
+}
+.float-2 {
+  animation-duration: 8.5s;
+  animation-delay: -1.2s;
+}
+.float-3 {
+  animation-duration: 9.5s;
+  animation-delay: -2.6s;
+}
+.float-4 {
+  animation-duration: 7.5s;
+  animation-delay: -3.4s;
+}
+
+@keyframes levitate {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(1.2deg);
+  }
+}
+
+/* --- tilt card ---------------------------------------------- */
+
+.tilt {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.45s var(--ease),
+    box-shadow 0.45s var(--ease);
+  will-change: transform;
+}
+
+.tilt-inner {
+  transform: translateZ(38px);
+  transform-style: preserve-3d;
+}
+
+.tilt-lift {
+  transform: translateZ(26px);
+  transition: transform 0.45s var(--ease);
+}
+
+/* --- 3D buttons --------------------------------------------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.78rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  border: 1px solid transparent;
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.25s var(--ease),
+    background 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow:
+    0 10px 30px -10px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transform: translateZ(0);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) translateZ(14px);
+  box-shadow:
+    0 20px 46px -12px var(--accent-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.btn-ghost {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.btn-ghost:hover {
+  transform: translateY(-2px) translateZ(10px);
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger {
+  color: #ffd9de;
+  background: rgba(251, 113, 133, 0.13);
+  border-color: rgba(251, 113, 133, 0.35);
+}
+
+.btn-danger:hover {
+  background: rgba(251, 113, 133, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.83rem;
+}
+
+.btn-lg {
+  padding: 0.95rem 1.7rem;
+  font-size: 1.03rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* --- gradient hairline -------------------------------------- */
+
+.hairline {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+}
+
+/* --- shimmer sweep ------------------------------------------ */
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  transform: skewX(-18deg);
+  animation: sweep 4.5s var(--ease-in-out) infinite;
+}
+
+@keyframes sweep {
+  0% {
+    left: -120%;
+  }
+  60%,
+  100% {
+    left: 150%;
+  }
+}
